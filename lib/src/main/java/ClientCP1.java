@@ -94,7 +94,7 @@ public class ClientCP1 {
         byte[] decryptedNonce=decryptcipher.doFinal(EncryptedNonce);
 
         //if does not match
-        if(!Arrays.equals(nonce,EncryptedNonce)){
+        if(!Arrays.equals(nonce,decryptedNonce)){
             clientSocket.close();
         }
 

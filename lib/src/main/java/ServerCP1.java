@@ -95,7 +95,7 @@ public class ServerCP1 {
         String message=new String(messageBytes);
         System.out.println(message);
         if(message.equals("Send your signed certificate")){
-            //        //send cert over in bytes
+            //send cert over in bytes
             dOut.writeInt(certdata.length);
             dOut.write(certdata);
             fis.close();
