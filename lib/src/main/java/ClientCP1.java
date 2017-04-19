@@ -1,5 +1,8 @@
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,9 +32,7 @@ public class ClientCP1 {
         System.out.println("connected");
         PrintWriter out =
                 new PrintWriter(clientSocket.getOutputStream(), true);
-        BufferedReader in =
-                new BufferedReader(
-                        new InputStreamReader(clientSocket.getInputStream()));
+        DataInputStream dIn = new DataInputStream(clientSocket.getInputStream());
 
 
         String message="Hello from the other side";
@@ -48,13 +49,31 @@ public class ClientCP1 {
 
 
         //InputStream fisServer = new FileInputStream(serverCertName);
-        InputStream fisServer = new BufferedInputStream(clientSocket.getInputStream());//may be problematic
-        CertificateFactory cfServer = CertificateFactory.getInstance("X.509");
-        X509Certificate ServerCert =(X509Certificate)cfServer.generateCertificate(fisServer);
-        PublicKey ServerPublicKey = ServerCert.getPublicKey();
-        //verify Server certicate
-        ServerCert.checkValidity();
-        ServerCert.verify(CAkey);
+
+        int certLength=dIn.readInt();
+        if(certLength>0) {
+            byte[] certdata = new byte[certLength];
+            dIn.readFully(certdata, 0, certdata.length); // read the message
+            InputStream fisServer = new ByteArrayInputStream(certdata);//may be problematic
+            CertificateFactory cfServer = CertificateFactory.getInstance("X.509");
+            X509Certificate ServerCert =(X509Certificate)cfServer.generateCertificate(fisServer);
+            PublicKey ServerPublicKey = ServerCert.getPublicKey();
+            //verify Server certicate
+            ServerCert.checkValidity();
+            ServerCert.verify(CAkey);
+        }
+        System.out.println("cert verified");
+
+
+
+
+//        InputStream fisServer = new ByteArrayInputStream(certdata);//may be problematic
+//        CertificateFactory cfServer = CertificateFactory.getInstance("X.509");
+//        X509Certificate ServerCert =(X509Certificate)cfServer.generateCertificate(fisServer);
+//        PublicKey ServerPublicKey = ServerCert.getPublicKey();
+//        //verify Server certicate
+//        ServerCert.checkValidity();
+//        ServerCert.verify(CAkey);
 
     }
 }
