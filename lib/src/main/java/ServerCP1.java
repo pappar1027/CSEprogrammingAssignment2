@@ -38,6 +38,7 @@ public class ServerCP1 {
         ServerSocket serverSocket = new ServerSocket(4321);
         System.out.println("(... expecting connection ...)");
         Socket clientSocket = serverSocket.accept();
+
         DataInputStream dIn = new DataInputStream(clientSocket.getInputStream());
         DataOutputStream dOut = new DataOutputStream(clientSocket.getOutputStream());
         //read cert
@@ -48,8 +49,6 @@ public class ServerCP1 {
 
 
         File privKeyFile =new File("/Users/zouyun/Desktop/academic-stuff/ProgrammingAssignment2/lib/src/main/java/privateServer.der");
-
-
 
 
         // read private key DER file
@@ -124,9 +123,11 @@ public class ServerCP1 {
         }
 
         //this is how many bytes is the file received
-        System.out.println(bytelen);
+        System.out.println(bytelen+"bytes received");
+
+
         //file content received
-        System.out.println(new String(CompletelyDecryptedFile));
+//        System.out.println(new String(CompletelyDecryptedFile));
 
         clientSocket.close();
 

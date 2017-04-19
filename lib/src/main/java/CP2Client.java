@@ -1,9 +1,10 @@
-package NS2;
+
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,8 +16,10 @@ import java.net.SocketAddress;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.PublicKey;
 import java.security.SecureRandom;
+import java.security.SignatureException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
@@ -79,6 +82,20 @@ public class CP2Client {
 		
 		//Request certificate from server
 		out.println("Request Cert");
+
+		//get CA's key
+		InputStream fis = new FileInputStream("/Users/zouyun/Desktop/academic-stuff/ProgrammingAssignment2/lib/src/main/java/CA.crt");
+		CertificateFactory cf = null;
+		PublicKey CAkey=null;
+		try {
+			cf = CertificateFactory.getInstance("X.509");
+			X509Certificate CAcert =(X509Certificate)cf.generateCertificate(fis);
+			CAkey = CAcert.getPublicKey();
+		} catch (CertificateException e) {
+			e.printStackTrace();
+		}
+
+
 		
 		//Send in the size of the cert to the client
 		byte[] cert = new byte[in.readInt()];
@@ -97,10 +114,20 @@ public class CP2Client {
 				cfServer = CertificateFactory.getInstance("X.509");
 				X509Certificate ServerCert =(X509Certificate)cfServer.generateCertificate(fisServer);
 		        ServerPublicKey = ServerCert.getPublicKey();
+				//verify Server certicate
+				ServerCert.checkValidity();
+				ServerCert.verify(CAkey);
+				System.out.println("cert verified by CA key");
 		         
 			} catch (CertificateException e) {
 				e.printStackTrace();
+			} catch (NoSuchProviderException e) {
+				e.printStackTrace();
+			} catch (SignatureException e) {
+				e.printStackTrace();
 			}
+
+
 			
 			byte[] outputMessage = null;
 		    try {

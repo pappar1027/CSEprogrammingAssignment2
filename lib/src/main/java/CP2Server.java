@@ -1,5 +1,3 @@
-package NS2;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -39,10 +37,11 @@ public class CP2Server {
 	private static Socket clientSocket;
 	
 	public static void main(String[] args) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
-		
+
 		//Declare new socket and get ready to act as server
 		try {
 			serverSocket = new ServerSocket(4321);
+			System.out.println("expecting connection");
 			clientSocket = serverSocket.accept();
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
@@ -162,7 +161,7 @@ public class CP2Server {
 			e.printStackTrace();
 		}
     	byte[] decryptedData = cipher.doFinal(encryptedData);
-		System.out.println(new String(decryptedData));
+//		System.out.println(new String(decryptedData));
 		
 	}
 }

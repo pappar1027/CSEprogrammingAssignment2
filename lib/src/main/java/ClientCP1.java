@@ -144,6 +144,7 @@ public class ClientCP1 {
 
 
         //upload the encrypted file
+
         dOut.writeInt(CompletelyEncryptedFile.length);
         dOut.write(CompletelyEncryptedFile);
 
